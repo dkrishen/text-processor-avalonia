@@ -1,0 +1,39 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:TextProcessor.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TextProcessor.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="TextProcessor">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+  <StackPanel>
+    <Menu>
+      <MenuItem Header="_File">
+        <MenuItem Header="_Open" Click="OpenFile"/>
+        <MenuItem Header="_Save" Click="SaveFile"/>
+      </MenuItem>
+      <MenuItem Header="_Edit">
+        <MenuItem Header="_Copy" Click="CopyText"/>
+        <MenuItem Header="_Paste" Click="PasteText"/>
+        <MenuItem Header="_Cut" Click="Cut"/>
+        <MenuItem Name="UndoButton" Header="_Undo" Click="Undo"/>
+        <MenuItem Name="RedoButton" Header="_Redo" Click="Redo"/>
+        <MenuItem Header="_Clear" Click="Clear"/>
+        <MenuItem Header="_Change Case" Click="ChangeCase"/>
+      </MenuItem>
+      
+    </Menu>
+    <TextBox Name="Editor" AcceptsReturn="True" Height="370"/>
+    
+  </StackPanel>
+
+  
+</Window>
