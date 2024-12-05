@@ -29,6 +29,11 @@
         <MenuItem Header="_Clear" Click="Clear"/>
         <MenuItem Header="_Change Case" Click="ChangeCase"/>
       </MenuItem>
+      <MenuItem Header="_Font">
+        <MenuItem Header="_Font" Click="SetFont"/>
+        <MenuItem Header="_Font Size" Click="SetFontSize"/>
+        <MenuItem Header="_Font Color" Click="SetFontColor"/>
+      </MenuItem>
       
     </Menu>
     <TextBox Name="Editor" AcceptsReturn="True" Height="370"/>

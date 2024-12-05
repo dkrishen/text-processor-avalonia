@@ -1,6 +1,6 @@
 using Avalonia.Controls;
+using Avalonia.Media;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace TextProcessor.Views
 {
@@ -20,10 +20,30 @@ namespace TextProcessor.Views
             var dialog = new OpenFileDialog();
             var result = await dialog.ShowAsync(this);
 
-            if (result != null)
+            if (result != null && result.Length > 0)
             {
-                var text = System.IO.File.ReadAllText(result[0]);
-                Editor.Text = text;
+                var fileContent = System.IO.File.ReadAllLines(result[0]);
+
+                if (fileContent.Length > 0)
+                {
+                    var firstLine = fileContent[0].Split(':');
+                    if (firstLine.Length == 3)
+                    {
+                        Editor.FontFamily = new FontFamily(firstLine[0]);
+
+                        if (double.TryParse(firstLine[1], out double fontSize))
+                        {
+                            Editor.FontSize = fontSize;
+                        }
+
+                        if (Color.TryParse(firstLine[2], out Color color))
+                        {
+                            Editor.Foreground = new SolidColorBrush(color);
+                        }
+                    }
+
+                    Editor.Text = string.Join("\n", fileContent.Skip(1));
+                }
             }
 
             UndoButton.IsVisible = true;
@@ -36,7 +56,13 @@ namespace TextProcessor.Views
 
             if (result != null)
             {
-                System.IO.File.WriteAllText(result, Editor.Text);
+                var fontFamily = Editor.FontFamily?.ToString() ?? "Default";
+                var fontSize = Editor.FontSize.ToString();
+                var fontColor = Editor.Foreground is SolidColorBrush brush ? brush.Color.ToString() : "#000000";
+
+                var fileContent = $"{fontFamily}:{fontSize}:{fontColor}\n{Editor.Text}";
+
+                System.IO.File.WriteAllText(result, fileContent);
             }
         }
 
@@ -87,6 +113,36 @@ namespace TextProcessor.Views
                 Editor.Text = isUpper ? text.ToLower() : text.ToUpper();
                 
                 UndoButton.IsVisible = true;
+            }
+        }
+
+        private async void SetFont(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            var fontDialog = new FontPickerDialog();
+            var selectedFont = await fontDialog.ShowStringDialog(this);
+            if (selectedFont != null)
+            {
+                Editor.FontFamily = new FontFamily(selectedFont);
+            }
+        }
+
+        private async void SetFontSize(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            var inputDialog = new InputDialog("Enter font size", "Font size:");
+            var result = await inputDialog.ShowStringDialog(this);
+            if (double.TryParse(result, out double fontSize))
+            {
+                Editor.FontSize = fontSize;
+            }
+        }
+
+        private async void SetFontColor(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            var colorDialog = new ColorPickerDialog();
+            var color = await colorDialog.ShowStringDialog(this);
+            if (color.HasValue)
+            {
+                Editor.Foreground = new SolidColorBrush(color.Value);
             }
         }
     }
